@@ -3,7 +3,7 @@ from time import sleep
 import os
 
 
-class PyPost:
+class Pysta:
     def __init__(self):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
@@ -68,5 +68,5 @@ class PyPost:
             'coreSpriteNotificationRightChevron').click()
 
 
-my_bot = PyPost()
+my_bot = Pysta()
 my_bot.readFile()
