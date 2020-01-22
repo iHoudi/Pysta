@@ -10,8 +10,6 @@ class Pysta:
 
         print("Bot ready")
 
-        # self.follow_requests()
-
     def readFile(self):
 
         if os.path.isfile("creds.txt"):
