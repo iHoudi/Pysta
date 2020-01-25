@@ -1,5 +1,7 @@
 from selenium import webdriver
 from time import sleep
+from time import time
+from datetime import datetime
 import os
 
 
@@ -7,8 +9,11 @@ class Pysta:
     def __init__(self):
         self.driver = webdriver.Chrome()
         self.driver.maximize_window()
+        self.base_url = "https://www.instagram.com/"
 
         print("Bot ready")
+
+        # self.follow_requests()
 
     def readFile(self):
 
@@ -39,7 +44,7 @@ class Pysta:
         self.username = username
         self.pw = pw
 
-        self.driver.get("https://www.instagram.com/accounts/login/")
+        self.driver.get(self.base_url + "accounts/login/")
         # Locates the username field and inputs the provided username
         sleep(2)
         self.driver.find_element_by_xpath(
@@ -51,12 +56,27 @@ class Pysta:
         sleep(2)
         # Locates the "log in" button and clicks it
         self.driver.find_element_by_xpath('//button[@type="submit"]').click()
-        sleep(2)
+        sleep(3)
         # Close the notification prompt on login
         self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
             .click()
 
-        self.follow_requests()
+        self.get_time()
+
+    def get_time(self):
+        now = int(datetime.now().strftime("%H"))
+
+        current = 0
+        while True:
+            sleep(5)
+            if now != current:
+                current = now
+                if now % 2 == 0:
+                    self.auto_like()
+                    # self.follow_requests()
+                else:
+                    self.auto_like()
+            return False
 
     def follow_requests(self):
         self.driver.find_element_by_xpath(
@@ -65,6 +85,45 @@ class Pysta:
         self.driver.find_element_by_class_name(
             'coreSpriteNotificationRightChevron').click()
 
+    def auto_like(self):
+        window_dims = self.driver.get_window_size()
+        scroll = window_dims.get("height", 1)
+        post_url = []
 
-my_bot = Pysta()
-my_bot.readFile()
+        scroll_amount = 1
+        for i in range(0, scroll_amount):
+            self.driver.execute_script(f"window.scrollTo(0, {scroll})")
+            sleep(3)
+            self.driver.find_element_by_xpath(
+                "/html/body/div[1]/section/main/section/div[1]/div[1]/div/article[1]/div[3]/button").click()
+            sleep(2)
+            self.driver.find_element_by_xpath(
+                "//button[contains(text(), 'Go to post')]").click()
+            sleep(2)
+            post_url = self.driver.current_url, i
+            sleep(1)
+            self.driver.get(self.base_url)
+            sleep(3)
+            # self.driver.execute_script(f"window.scrollTo(0, {scroll})")
+
+        print(post_url)
+
+        # self.driver.get(self.base_url + "explore/")
+
+    """def modtest(self):
+        for i in range(1, 24):
+            # print(i, i % 2)
+            if i % 2 == 0:
+                print("Even hour", i)
+            else:
+             print("Odd hour", i)
+    """
+
+
+if __name__ == "__main__":
+
+    my_bot = Pysta()
+    my_bot.readFile()
+
+    # my_bot.auto_main()
+    # my_bot.modtest()
