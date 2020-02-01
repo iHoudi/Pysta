@@ -4,6 +4,8 @@ from time import time
 from datetime import datetime
 import os
 
+from get_time import get_hour
+
 
 class Pysta:
     def __init__(self):
@@ -61,9 +63,20 @@ class Pysta:
         self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
             .click()
 
-        self.get_time()
+    def automate(self):
+        now = int(datetime.now().strftime("%H"))
+        while True:
+            returned = get_hour(now)
+            sleep(10)
+            if returned == 0:
+                print("Hour is even")
+                self.auto_like()
+            else:
+                print("Hour is odd")
+                self.follow_requests()
+        return False
 
-    def get_time(self):
+    """ def get_time(self):
         now = int(datetime.now().strftime("%H"))
 
         current = 0
@@ -76,7 +89,7 @@ class Pysta:
                     # self.follow_requests()
                 else:
                     self.auto_like()
-            return False
+            return False """
 
     def follow_requests(self):
         self.driver.find_element_by_xpath(
@@ -86,16 +99,20 @@ class Pysta:
             'coreSpriteNotificationRightChevron').click()
 
     def auto_like(self):
+        print("auto_like has started")
         window_dims = self.driver.get_window_size()
         scroll = window_dims.get("height", 1)
         post_url = []
 
-        scroll_amount = 1
+        n = 1
+        scroll_amount = 2
         for i in range(0, scroll_amount):
-            self.driver.execute_script(f"window.scrollTo(0, {scroll})")
-            sleep(3)
-            self.driver.find_element_by_xpath(
-                "/html/body/div[1]/section/main/section/div[1]/div[1]/div/article[1]/div[3]/button").click()
+            print("Scrolling Started")
+            sleep(5)
+
+            self.driver.find_element_by_class_name(
+                "wpO6b ").click()
+
             sleep(2)
             self.driver.find_element_by_xpath(
                 "//button[contains(text(), 'Go to post')]").click()
@@ -104,6 +121,10 @@ class Pysta:
             sleep(1)
             self.driver.get(self.base_url)
             sleep(3)
+            self.driver.execute_script(f"window.scrollTo(0, {scroll * n})")
+            sleep(2)
+            n += 1
+            print("Test")
             # self.driver.execute_script(f"window.scrollTo(0, {scroll})")
 
         print(post_url)
@@ -124,6 +145,7 @@ if __name__ == "__main__":
 
     my_bot = Pysta()
     my_bot.readFile()
+    my_bot.automate()
 
     # my_bot.auto_main()
     # my_bot.modtest()
